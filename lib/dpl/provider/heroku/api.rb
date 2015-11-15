@@ -25,11 +25,13 @@ module DPL
 
         def upload_archive
           log "uploading application archive"
+          log "curl #{Shellwords.escape(put_url)} -X PUT -H 'Content-Type:' --data-binary @#{archive_file}"
           context.shell "curl #{Shellwords.escape(put_url)} -X PUT -H 'Content-Type:' --data-binary @#{archive_file}"
         end
 
         def trigger_build
           log "triggering new deployment"
+          log get_url
           response   = post(:builds, source_blob: { url: get_url, version: version })
           @build_id  = response.fetch('id')
           output_stream_url = response.fetch('output_stream_url')
@@ -87,6 +89,7 @@ module DPL
             expects: [200, 201]
           }.merge(options)
 
+          log options[:path]
           if body
             options[:body]                    = JSON.dump(body)
             options[:headers]['Content-Type'] = 'application/json'
