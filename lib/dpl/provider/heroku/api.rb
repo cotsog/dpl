@@ -21,6 +21,7 @@ module DPL
         def pack_archive
           log "creating application archive"
           context.shell "tar -zcf #{archive_file} ."
+          log "%+d" % (File.size("#{archive_file}").to_f / 2**20).round(2)
         end
 
         def upload_archive
