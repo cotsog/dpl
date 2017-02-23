@@ -44,7 +44,6 @@ module DPL
       end
 
       def check_auth
-        push_app
         unless with_python_2_7("#{GCLOUD} -q --verbosity debug auth activate-service-account --key-file #{keyfile}")
           error 'Authentication failed.'
         end
@@ -91,7 +90,7 @@ module DPL
         command << " --version \"#{version}\"" unless version.to_s.empty?
         command << " --#{no_promote ? 'no-' : ''}promote"
         command << ' --no-stop-previous-version' unless no_stop_previous_version.to_s.empty?
-        log "Command: #{command}"
+        log "Command: #{command}" if debug
         unless with_python_2_7(command)
           log 'Deployment failed.'
           context.shell('find $HOME/.config/gcloud/logs -type f -print -exec cat {} \;')
